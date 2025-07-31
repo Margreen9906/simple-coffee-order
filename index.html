@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Coffee Order Assistant</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .container {
+      max-width: 500px;
+      margin-top: 40px;
+      padding: 30px;
+      background-color: white;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      border-radius: 10px;
+    }
+    h2 {
+      font-weight: 600;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .result-box {
+      margin-top: 20px;
+      border-left: 5px solid #198754;
+      padding-left: 15px;
+      background-color: #e9f7ef;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Smart Coffee Order Assistant ☕</h2>
+    <form id="coffeeForm">
+      <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" id="username" class="form-control" required />
+      </div>
+      <div class="mb-3">
+        <label for="age" class="form-label">Your Age</label>
+        <input type="number" id="age" class="form-control" required />
+      </div>
+      <div class="mb-3">
+        <label for="coffeeType" class="form-label">Select Coffee</label>
+        <select id="coffeeType" class="form-select" required>
+          <option value="" disabled selected>Select coffee</option>
+          <option value="3">Cappuccino - $3</option>
+          <option value="3.5">Latte - $3.5</option>
+          <option value="2.5">Espresso - $2.5</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="quantity" class="form-label">Quantity</label>
+        <input type="number" id="quantity" class="form-control" required />
+      </div>
+      <hr />
+      <h5>Bill Split</h5>
+      <div class="mb-3">
+        <label for="people" class="form-label">Split between</label>
+        <select id="people" class="form-select">
+          <option value="1">1 Person</option>
+          <option value="2">2 People</option>
+          <option value="3">3 People</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="tip" class="form-label">Tip %</label>
+        <select id="tip" class="form-select">
+          <option value="0">No tip</option>
+          <option value="0.05">5%</option>
+          <option value="0.1">10%</option>
+          <option value="0.15">15%</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-success w-100">Calculate</button>
+    </form>
+
+    <div id="result" class="result-box mt-4" style="display: none;"></div>
+  </div>
+
+  <script>
+    document.getElementById("coffeeForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const username = document.getElementById("username").value.trim();
+      const age = parseInt(document.getElementById("age").value);
+      const coffeeTypeValue = document.getElementById("coffeeType").value;
+      const quantity = parseInt(document.getElementById("quantity").value);
+      const people = parseInt(document.getElementById("people").value);
+      const tipPercent = parseFloat(document.getElementById("tip").value);
+
+      // اعتبارسنجی ورود
+      if (username !== "admin") {
+        alert("Invalid credentials.");
+        return;
+      }
+
+      if (coffeeTypeValue === "") {
+        alert("Please select a coffee type.");
+        return;
+      }
+
+      const coffeePrice = parseFloat(coffeeTypeValue);
+
+      let total = coffeePrice * quantity;
+      let discount = 0;
+
+      if (age < 18) {
+        discount = 0.1 * total; // 10٪ تخفیف
+      }
+
+      const tip = total * tipPercent;
+      const finalTotal = total - discount + tip;
+      const perPerson = finalTotal / people;
+
+      // نمایش نتیجه
+      document.getElementById("result").style.display = "block";
+      document.getElementById("result").innerHTML = `
+        <p><strong>Hello ${username}!</strong></p>
+        <p>You ordered ${quantity} coffee(s).</p>
+        <p>Original total: $${total.toFixed(2)}</p>
+        <p>Discount: $${discount.toFixed(2)}</p>
+        <p>Tip: $${tip.toFixed(2)}</p>
+        <p><strong>Final total: $${finalTotal.toFixed(2)}</strong></p>
+        <p>Each person pays: $${perPerson.toFixed(2)}</p>
+      `;
+    });
+  </script>
+</body>
+</html>
